@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magacinski Informacioni Sistem</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f6fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .tab-btn {
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            flex: 1;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: var(--light);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .data-table th {
+            background: var(--light);
+            font-weight: 600;
+        }
+        
+        .data-table tr:hover {
+            background: #f9f9f9;
+        }
+        
+        /* Status Indicators */
+        .status-low {
+            background-color: rgba(255, 255, 0, 0.2);
+        }
+        
+        .status-critical {
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .tab-nav {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">Magacinski Sistem</div>
+            <div class="user-info" id="userInfo">
+                <span id="currentUser">Niste prijavljeni</span>
+                <button class="btn btn-primary" id="logoutBtn" style="display: none;">Odjava</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Screen -->
+    <div class="container" id="loginScreen">
+        <div class="login-container">
+            <div class="login-form">
+                <h2>Prijava u sistem</h2>
+                <div class="form-group">
+                    <label for="username">Korisničko ime:</label>
+                    <input type="text" id="username" class="form-control" placeholder="Unesite korisničko ime">
+                </div>
+                <div class="form-group">
+                    <label for="password">Lozinka:</label>
+                    <input type="password" id="password" class="form-control" placeholder="Unesite lozinku">
+                </div>
+                <div class="form-group">
+                    <label for="role">Uloga:</label>
+                    <select id="role" class="form-control">
+                        <option value="MAGACIN_ADMIN">Magacin Admin</option>
+                        <option value="REZERVACIJA">Rezervacija</option>
+                        <option value="PREUZIMANJE">Preuzimanje</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="loginBtn" style="width: 100%;">Prijavi se</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="container" id="appScreen" style="display: none;">
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="artikli">Artikli</button>
+            <button class="tab-btn" data-tab="rezervacije">Rezervacije</button>
+            <button class="tab-btn" data-tab="preuzimanja">Preuzimanja</button>
+            <button class="tab-btn" data-tab="ulazi" id="ulaziTab" style="display: none;">Ulazi</button>
+            <button class="tab-btn" data-tab="korisnici" id="korisniciTab" style="display: none;">Korisnici</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content active" id="artikli">
+            <div class="action-buttons">
+                <button class="btn btn-success" id="addArticleBtn" style="display: none;">Dodaj artikal</button>
+                <button class="btn btn-primary" id="exportExcelBtn">Izvezi u Excel</button>
+                <button class="btn btn-primary" id="exportPdfBtn">Izvezi u PDF</button>
+                <input type="file" id="importExcel" accept=".xlsx,.xls" style="display: none;">
+                <button class="btn btn-warning" id="importExcelBtn">Uvezi iz Excel</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="articlesTable">
+                    <thead>
+                        <tr>
+                            <th>Šifra</th>
+                            <th>Naziv</th>
+                            <th>Lokacija</th>
+                            <th>Projekat</th>
+                            <th>Dobavljač</th>
+                            <th>Cena</th>
+                            <th>Stanje</th>
+                            <th>Rezervisano</th>
+                            <th>Dostupno</th>
+                            <th>Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody id="articlesTableBody">
+                        <!-- Popunjava se JavaScript-om -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="rezervacije">
+            <div class="action-buttons">
+                <button class="btn btn-success" id="addReservationBtn">Nova rezervacija</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="reservationsTable">
+                    <thead>
+                        <tr>
+                            <th>Šifra</th>
+                            <th>Naziv artikla</th>
+                            <th>Količina</th>
+                            <th>Rezervisao</th>
+                            <th>Vreme rezervacije</th>
+                            <th>Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservationsTableBody">
+                        <!-- Popunjava se JavaScript-om -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="preuzimanja">
+            <div class="action-buttons">
+                <button class="btn btn-success" id="addPickupBtn">Novo preuzimanje</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="pickupsTable">
+                    <thead>
+                        <tr>
+                            <th>Šifra</th>
+                            <th>Naziv artikla</th>
+                            <th>Količina</th>
+                            <th>Preuzeo</th>
+                            <th>Vreme preuzimanja</th>
+                            <th>Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pickupsTableBody">
+                        <!-- Popunjava se JavaScript-om -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="ulazi">
+            <div class="action-buttons">
+                <button class="btn btn-success" id="addEntryBtn">Dodaj ulaz</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="entriesTable">
+                    <thead>
+                        <tr>
+                            <th>Šifra</th>
+                            <th>Naziv artikla</th>
+                            <th>Količina</th>
+                            <th>Cena</th>
+                            <th>Dobavljač</th>
+                            <th>Datum</th>
+                            <th>Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entriesTableBody">
+                        <!-- Popunjava se JavaScript-om -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-content" id="korisnici">
+            <div class="action-buttons">
+                <button class="btn btn-success" id="addUserBtn">Dodaj korisnika</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Ime</th>
+                            <th>Uloga</th>
+                            <th>Šifra</th>
+                            <th>Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Popunjava se JavaScript-om -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal za dodavanje artikla -->
+    <div class="modal" id="articleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="articleModalTitle">Dodaj artikal</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="articleForm">
+                <div class="form-group">
+                    <label for="articleCode">Šifra artikla:</label>
+                    <input type="text" id="articleCode" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="articleName">Naziv artikla:</label>
+                    <input type="text" id="articleName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="articleLocation">Lokacija:</label>
+                    <input type="text" id="articleLocation" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="articleProject">Projekat:</label>
+                    <input type="text" id="articleProject" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="articleSupplier">Dobavljač:</label>
+                    <input type="text" id="articleSupplier" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="articlePrice">Cena:</label>
+                    <input type="number" id="articlePrice" class="form-control" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="articleQuantity">Količina:</label>
+                    <input type="number" id="articleQuantity" class="form-control">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Sačuvaj</button>
+                    <button type="button" class="btn btn-secondary close-modal">Otkaži</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal za rezervaciju -->
+    <div class="modal" id="reservationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova rezervacija</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="reservationForm">
+                <div class="form-group">
+                    <label for="reservationArticle">Artikal:</label>
+                    <select id="reservationArticle" class="form-control" required>
+                        <option value="">Izaberite artikal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reservationQuantity">Količina:</label>
+                    <input type="number" id="reservationQuantity" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="reservationUser">Korisnik:</label>
+                    <select id="reservationUser" class="form-control" required>
+                        <option value="">Izaberite korisnika</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reservationCode">Potvrdni kod (7 karaktera):</label>
+                    <input type="text" id="reservationCode" class="form-control" maxlength="7" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Potvrdi rezervaciju</button>
+                    <button type="button" class="btn btn-secondary close-modal">Otkaži</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal za preuzimanje -->
+    <div class="modal" id="pickupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo preuzimanje</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="pickupForm">
+                <div class="form-group">
+                    <label for="pickupArticle">Artikal:</label>
+                    <select id="pickupArticle" class="form-control" required>
+                        <option value="">Izaberite artikal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pickupQuantity">Količina:</label>
+                    <input type="number" id="pickupQuantity" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="pickupUser">Korisnik:</label>
+                    <select id="pickupUser" class="form-control" required>
+                        <option value="">Izaberite korisnika</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pickupCode">Potvrdni kod (7 karaktera):</label>
+                    <input type="text" id="pickupCode" class="form-control" maxlength="7" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Potvrdi preuzimanje</button>
+                    <button type="button" class="btn btn-secondary close-modal">Otkaži</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+
+    <!-- BRZI FIX: Zaobiđi prijavu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'block';
+            document.getElementById('currentUser').textContent = 'Admin User (Test Mode)';
+            document.getElementById('logoutBtn').style.display = 'block';
+            document.getElementById('ulaziTab').style.display = 'block';
+            document.getElementById('korisniciTab').style.display = 'block';
+            document.getElementById('addArticleBtn').style.display = 'block';
+            
+            console.log('Aplikacija pokrenuta u test modu (bez prijave)');
+        });
+    </script>
+</body>
+</html>
